@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>تحدّي قيصر | لعبة فك الشفرة</title>
+<style>
+/* تحدّي قيصر | style.css */
+:root{--bg:#060a14;--panel:#0c1426;--panel2:#111d38;--ink:#e6f1ff;--mute:#8aa0c4;--line:#1e3157;--acc:#22d3ee;--acc2:#4ade80;--ok:#4ade80;--bad:#fb7185;--glow:#22d3ee33;--on:#04121a;--sh:#0e7490;--grid:#22d3ee14;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{min-height:100%}
+[hidden]{display:none!important}
+body{margin:0;min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;font-family:Tajawal,"Geeza Pro","Noto Sans Arabic",system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:500;background:radial-gradient(ellipse at 85% 0,var(--glow),transparent 55%),radial-gradient(ellipse at 0 100%,var(--glow),transparent 50%),var(--bg);color:var(--ink)}
+button{touch-action:manipulation;font:inherit}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc2);outline-offset:2px}
+.app{width:100%;max-width:1100px;padding:16px;display:grid;gap:20px;align-items:center}
+@media(min-width:560px){.app{grid-template-columns:1fr 1.05fr}}
+.card{background:linear-gradient(165deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:28px;padding:28px;box-shadow:0 18px 50px var(--glow)}
+h1{font-size:clamp(2.4rem,7vw,3.8rem);line-height:1.1;margin:0 0 12px;font-weight:800;text-shadow:3px 3px 0 var(--sh)}
+h2{font-size:1.45rem;margin:.3em 0;font-weight:800}
+p{margin:.5em 0}
+.lead{color:var(--mute);line-height:1.8;font-size:1.08rem}
+.in{width:100%;font:inherit;padding:13px 14px;border-radius:14px;border:2px solid var(--line);background:var(--bg);color:var(--ink);margin:8px 0 14px}
+.btn{display:block;width:100%;font-weight:800;border:0;border-radius:16px;padding:15px 24px;background:var(--acc);color:var(--on);cursor:pointer;font-size:1.15rem}
+.btn:active{transform:scale(.98)}
+.row .btn{width:auto;flex:1}
+.pulse{animation:pl 1.8s infinite}
+@keyframes pl{50%{box-shadow:0 0 0 12px var(--glow)}}
+.ghost{font-weight:800;background:transparent;color:var(--acc2);border:2px solid var(--line);border-radius:14px;padding:11px 16px;cursor:pointer}
+.ghost:disabled{opacity:.5;cursor:default}
+.steps{display:flex;gap:8px;list-style:none;padding:0;margin:20px 0 0}
+.steps li{flex:1;text-align:center;padding:10px 4px;border-radius:12px;background:var(--bg);border:1px solid var(--line);font-weight:800}
+.top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.pill{background:var(--bg);border:1px solid var(--line);padding:5px 14px;border-radius:99px;font-weight:800;color:var(--acc2);white-space:nowrap}
+.stp{display:flex;align-items:center;flex:1;list-style:none;padding:0;margin:0;counter-reset:s}
+.stp li{display:flex;align-items:center;flex:1;counter-increment:s}
+.stp li:last-child{flex:0}
+.stp li::before{content:counter(s);flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:var(--bg);border:2px solid var(--line);color:var(--mute)}
+.stp li:not(:last-child)::after{content:"";flex:1;height:3px;margin:0 6px;border-radius:2px;background:var(--line)}
+.stp .on::before{border-color:var(--acc);color:var(--acc);box-shadow:0 0 0 4px var(--glow)}
+.stp .done::before{content:"✓";background:var(--acc);border-color:var(--acc);color:var(--on)}
+.stp .done::after{background:var(--acc)}
+.tiles{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.tiles span{font:800 1.8rem ui-monospace,Menlo,Consolas,monospace;width:48px;height:58px;display:grid;place-items:center;border-radius:12px;background:var(--bg);border:2px solid var(--acc2);color:var(--acc2)}
+.how{color:var(--mute);line-height:1.8}
+.live{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px 14px;text-align:center;margin:10px 0}
+.live b{display:block;font:800 1.6rem ui-monospace,Menlo,Consolas,monospace;letter-spacing:.2em;color:var(--acc2)}
+.ans{display:grid;gap:10px;margin:16px 0 4px}
+.slots{position:relative;display:flex;gap:6px;justify-content:center}
+.slots b{flex:0 1 52px;min-width:0;height:60px;border-radius:12px;border:2px dashed var(--mute);display:grid;place-items:center;font:800 1.7rem ui-monospace,Menlo,Consolas,monospace;background:var(--bg)}
+.slots b.cur{border:2px solid var(--acc);box-shadow:0 0 0 3px var(--glow)}
+.slots.ok b{border:2px solid var(--ok);color:var(--ok)}
+.slots.bad{animation:sh .4s}
+.slots.bad b{border-color:var(--bad)}
+#ans{position:absolute;inset:0;width:100%;height:100%;opacity:0;font-size:16px;border:0;cursor:text}
+@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+#fb{min-height:1.7em;font-weight:800;margin:8px 0}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.hint{color:var(--acc2)}.mt{color:var(--mute)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.cert{border:3px double var(--acc);border-radius:20px;padding:18px 12px;text-align:center;background:var(--bg);margin-bottom:12px}
+.cert h2{margin:0}
+.rank{font-size:1.7rem;font-weight:800;color:var(--acc2);margin:.3em 0}
+.stz{font-size:1.4rem;letter-spacing:.1em;color:var(--acc);margin:.2em 0}
+.bruteg{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px;margin:12px 0;font:700 .95rem ui-monospace,Menlo,Consolas,monospace}
+.bruteg div{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px;text-align:center}
+.bruteg small{display:block;color:var(--mute);font-size:.7rem}
+.bruteg .hit{outline:2px solid var(--ok);color:var(--ok)}
+.stage{display:grid;justify-items:center;gap:6px}
+svg{width:min(100%,520px,max(240px,calc(100vh - 350px)));width:min(100%,520px,max(240px,calc(100dvh - 350px)));display:block;direction:ltr;filter:drop-shadow(0 8px 30px var(--glow));transition:filter .4s}
+svg.win{filter:drop-shadow(0 0 26px var(--acc))}
+.c1{fill:var(--panel2);stroke:url(#g);stroke-width:4}
+.c2{fill:var(--panel);stroke:var(--line);stroke-width:2}
+.c3{fill:var(--bg);stroke:var(--acc2);stroke-width:3}
+.dv{stroke:var(--line);stroke-width:1.2}
+.mk{fill:var(--acc2)}
+.hl{fill:var(--acc);opacity:.3}
+.ol text{fill:var(--ink);font-size:16px;font-weight:800;text-anchor:middle;cursor:pointer}
+.ol:hover text{fill:var(--acc2)}
+.il{fill:var(--acc2);font-size:14px;font-weight:800;text-anchor:middle}
+.kv{fill:var(--ink);font-size:34px;font-weight:800;text-anchor:middle}
+.kl{fill:var(--mute);font-size:11px;text-anchor:middle}
+.ctl{display:flex;gap:22px;justify-content:center}
+.rb{width:66px;height:66px;border-radius:50%;border:2px solid var(--acc2);background:var(--panel);color:var(--ink);font:800 2rem/1 system-ui,sans-serif;cursor:pointer}
+.rb:active{background:var(--acc);color:var(--on)}
+#ro{text-align:center;color:var(--mute);margin:4px 0 0;min-height:1.6em}
+.mute{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));inset-inline-start:12px;width:44px;height:44px;border-radius:50%;border:2px solid var(--line);background:var(--panel);font-size:1.2rem;cursor:pointer;z-index:5}
+.cf{position:fixed;top:-14px;width:9px;height:14px;border-radius:2px;z-index:9;pointer-events:none;animation:fall 2.2s ease-in forwards}
+@keyframes fall{to{transform:translate(var(--d),105vh) rotate(720deg)}}
+@media(min-width:560px) and (max-width:899px){.app{gap:14px;padding:12px}.card{padding:18px}h1{font-size:2.1rem}h2{font-size:1.25rem}.lead{font-size:1rem;line-height:1.7}.tiles{margin:10px 0}.tiles span{width:38px;height:48px;font-size:1.4rem}.slots b{height:52px}.rb{width:56px;height:56px}}
+@media(prefers-reduced-motion:reduce){.cf{display:none}.slots.bad,.pulse{animation:none}svg{transition:none}}
+@media(max-height:760px){.slots b{height:48px}.tiles span{height:46px}}
+body{background:linear-gradient(var(--grid) 1px,transparent 1px) 0 0/36px 36px,linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/36px 36px,radial-gradient(ellipse at 85% 0,var(--glow),transparent 55%),var(--bg)}
+.card{position:relative}
+.card::before,.card::after{content:"";position:absolute;width:28px;height:28px;border:3px solid var(--acc);pointer-events:none}
+.card::before{top:-2px;left:-2px;border-width:3px 0 0 3px;border-top-left-radius:28px}
+.card::after{bottom:-2px;right:-2px;border-width:0 3px 3px 0;border-bottom-right-radius:28px}
+.botrow{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.bot{width:78px;height:auto;flex:none;animation:fl 3s ease-in-out infinite;filter:drop-shadow(0 0 10px var(--glow))}
+.hd{fill:var(--panel2);stroke:var(--acc);stroke-width:3}
+.bot .fh,.bot .fs{display:none}
+.bot.happy .fn,.bot.sad .fn{display:none}
+.bot.happy .fh,.bot.sad .fs{display:inline}
+.bot.happy{animation:hop .5s 2}
+.bot.sad{animation:sh .4s}
+@keyframes fl{50%{transform:translateY(-4px)}}
+@keyframes hop{50%{transform:translateY(-14px)}}
+#fb{flex:1;margin:0;padding:10px 14px;border-radius:14px;background:var(--bg);border:1px solid var(--line);min-height:3.2em;display:flex;align-items:center;font-weight:800}
+#mean{text-align:center;font-weight:800;color:var(--acc2);margin:0 0 6px;min-height:1.4em}
+.tiles{flex-wrap:nowrap}
+.tiles span{flex:0 1 48px;min-width:0}
+.tiles[data-n="7"] span,.tiles[data-n="8"] span{font-size:1.5rem}
+.tiles[data-n="9"] span,.tiles[data-n="10"] span{font-size:1.15rem}
+.slots[data-n="7"] b,.slots[data-n="8"] b{font-size:1.4rem}
+.slots[data-n="9"] b,.slots[data-n="10"] b{font-size:1.1rem}
+.cim{width:100%;display:block;margin:10px 0;border-radius:14px;border:2px solid var(--acc);box-shadow:0 0 24px var(--glow)}
+@media(prefers-reduced-motion:reduce){.bot,.bot.happy,.bot.sad{animation:none}}
+.ov{position:fixed;inset:0;z-index:20;background:rgba(2,6,16,.9);display:grid;place-items:center;overflow:auto;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.ovb{width:100%;max-width:760px;text-align:center;color:#fff;display:grid;gap:12px}
+.ovb p{margin:0;font-weight:800;font-size:1.15rem}
+.ovb img{width:100%;border-radius:12px;border:2px solid var(--acc)}
+.ovb .ghost{color:#fff;border-color:#8aa0c4}
+a.btn{text-decoration:none;text-align:center}
+.app{padding-top:64px}
+.botrow{grid-column:1/-1;position:sticky;top:calc(env(safe-area-inset-top,0px) + 58px);z-index:6;width:100%;max-width:760px;justify-self:center;margin:0;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:0 8px 24px var(--glow)}
+@media(max-width:559px){.bot{width:54px}#fb{min-height:2.6em;padding:8px 12px;font-size:.95rem}}
+.cr{grid-column:1/-1;text-align:center;color:var(--mute);font-weight:800;font-size:.95rem;margin:2px 0 0}
+.ttlrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ttlrow h2{margin:.3em 0}
+#tm{font-variant-numeric:tabular-nums;white-space:nowrap}
+#tm.low{color:var(--bad);border-color:var(--bad);animation:pl 1s infinite}
+.ovb{max-width:1100px;justify-items:center}
+.ovb img{width:min(100%,calc((100dvh - 110px)*1.5))}
+@media(orientation:portrait){.ovb img{width:min(100%,calc((100dvh - 110px)*.75))}}
+.ovb .btn{width:auto;padding:12px 44px}
+.cf{z-index:30}
+.cim{cursor:zoom-in}
+.lg{inset-inline-start:auto;inset-inline-end:12px;font-size:.95rem;font-weight:800;color:var(--ink)}
+#task{font-size:1.3rem;font-weight:800;line-height:1.6}
+.how{font-size:1.2rem;line-height:1.8}
+.lead{font-size:1.2rem}
+#fb{font-size:1.15rem}
+#mean{font-size:1.15rem}
+.live{font-size:1.1rem}
+@media(max-width:559px){#fb{font-size:1rem}.lead,.how{font-size:1.1rem}}
+.app{padding-bottom:10px;row-gap:14px}
+</style>
+</head>
+<body>
+<button class="mute" id="mute" aria-label="Sound">🔊</button>
+<button class="mute lg" id="lg" aria-label="Language">EN</button>
+<main class="app">
+<div class="botrow"><svg class="bot" id="bot" viewBox="0 0 100 112" aria-hidden="true">
+  <path d="M24 30Q50 -8 76 30L68 31Q50 6 32 31Z" fill="#fbbf24"/>
+  <rect x="18" y="26" width="64" height="50" rx="16" class="hd"/><rect x="26" y="34" width="48" height="34" rx="10" fill="#04101c"/>
+  <g class="fn" fill="#22d3ee" stroke="#22d3ee" stroke-width="3" stroke-linecap="round"><circle cx="39" cy="48" r="4.5" stroke="none"/><circle cx="61" cy="48" r="4.5" stroke="none"/><path d="M42 58Q50 64 58 58" fill="none"/></g>
+  <g class="fh" fill="none" stroke="#22d3ee" stroke-width="3" stroke-linecap="round"><path d="M34 51Q39 44 44 51M56 51Q61 44 66 51"/><path d="M40 57Q50 68 60 57"/></g>
+  <g class="fs" fill="none" stroke="#fb7185" stroke-width="3" stroke-linecap="round"><path d="M35 44L43 52M43 44L35 52M57 44L65 52M65 44L57 52"/><path d="M42 61Q50 55 58 61"/></g>
+  <rect x="30" y="80" width="40" height="26" rx="10" class="hd"/><circle cx="50" cy="93" r="5" fill="#22d3ee"/>
+ </svg><p id="fb" role="status"></p></div>
+<div class="card">
+ <section id="s-start">
+  <h1 data-i="h1"></h1>
+  <p class="lead" data-i="lead"></p>
+  <input class="in" id="name" maxlength="14" autocomplete="off" aria-label="Name">
+  <button class="btn pulse" id="go" data-i="go"></button>
+  <ol class="steps"><li data-i="st1"></li><li data-i="st2"></li><li data-i="st3"></li></ol>
+ </section>
+ <section id="s-play" hidden>
+  <div class="top"><ol class="stp" id="stp"><li></li><li></li><li></li></ol><span class="pill" id="sr"></span></div>
+  <div class="ttlrow"><h2 id="ttl"></h2><span class="pill" id="tm"></span></div>
+  <p id="task"></p>
+  <div class="tiles" dir="ltr" id="tiles"></div>
+  <p id="mean"></p>
+  <p class="how" id="how"></p>
+  <div class="live" id="live" hidden><span data-i="live"></span><b dir="ltr" id="lt"></b></div>
+  <div class="ans">
+   <div class="slots" id="slots" dir="ltr"><input id="ans" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-label="Answer"></div>
+   <button class="btn" id="chk" data-i="chk"></button>
+  </div>
+  <div class="row"><button class="ghost" id="hint"></button><button class="btn" id="next" hidden></button></div>
+ </section>
+ <section id="s-lose" hidden>
+  <h2 data-i="lose1"></h2>
+  <p class="rank" data-i="lose2"></p>
+  <p class="lead"><span data-i="ansWas"></span> <bdi id="la"></bdi></p>
+  <p class="lead" data-i="noGive"></p>
+  <button class="btn" id="rt" data-i="retry"></button>
+ </section>
+ <section id="s-end" hidden>
+  <h2 id="eh"></h2>
+  <img class="cim" id="cim" alt="Certificate">
+  <p class="how" data-i="capCert"></p>
+  <p class="lead"><b data-i="whyQ"></b> <span data-i="whyA"></span></p>
+  <button class="ghost" id="bb"><span data-i="bruteBtn"></span> <bdi id="bw"></bdi></button>
+  <div class="bruteg" id="bg" dir="ltr" hidden></div>
+  <p><button class="btn" id="ag" data-i="again"></button></p>
+ </section>
+</div>
+<div class="stage">
+ <svg id="wheel" viewBox="-160 -160 320 320" role="img" aria-label="Caesar wheel">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--acc)"/><stop offset="1" style="stop-color:var(--acc2)"/></linearGradient></defs>
+  <circle r="146" class="c1"/><circle r="106" class="c2"/><circle r="64" class="c3"/>
+  <rect id="hl" class="hl" x="-12" y="-142" width="24" height="76" rx="9" visibility="hidden"/>
+  <g id="outer"></g><g id="ring"></g>
+  <path class="mk" d="M-10 -160L10 -160L0 -141Z"/>
+  <text class="kl" y="-18" data-i="shift"></text><text class="kv" id="kv" y="14"></text>
+ </svg>
+ <div class="ctl" dir="ltr"><button class="rb" id="dec" aria-label="−1">−</button><button class="rb" id="inc" aria-label="+1">+</button></div>
+ <p id="ro"></p>
+</div>
+<footer class="cr" data-i="credit"></footer>
+</main>
+<div class="ov" id="ov" hidden>
+ <div class="ovb">
+  <img id="oim" alt="Certificate">
+  <button class="btn" id="oc" data-i="close"></button>
+ </div>
+</div>
+<script>
+const A="ABCDEFGHIJKLMNOPQRSTUVWXYZ",S=360/26,NS="http://www.w3.org/2000/svg",$=i=>document.getElementById(i),M=n=>(n%26+26)%26;
+const dec=(w,s)=>[...w].map(c=>A[M(A.indexOf(c)-s)]).join(""),enc=(w,s)=>dec(w,-s);
+
+/* ===== النصوص: عربي / English ===== */
+const T={
+ar:{title:"تحدّي قيصر | لعبة فك الشفرة",h1:"تحدّي قيصر 🔐",lead:"وصلتك رسالة سرية من هاكر! ساعد قيصر-بوت يشفّر ويفك ويكسر الشفرات، وأثبت إنك محقق أمن سيبراني حقيقي. 3 مراحل، ولكل مرحلة مؤقت ⏱ فلا تتأخر!",ph:"اسمك (اختياري)",go:"ابدأ التحدي",st1:"1 شفّر",st2:"2 فُكّ",st3:"3 اكسر",chk:"تحقق",live:"النص عند هذه الإزاحة",shift:"الإزاحة",
+ lose1:"⏰ انتهى الوقت!",lose2:"حظاً أوفر 🍀",ansWas:"الإجابة الصحيحة كانت",noGive:"لا تيأس، كل محقق يبدأ بمحاولة!",retry:"جرّب مرة ثانية 🔄",
+ whyQ:"💡 ليش شفرة قيصر ضعيفة؟",whyA:"لأن فيها 25 احتمال بس، وأي أحد يجرّبها كلها في دقائق. عشان كذا الأنظمة الحديثة تستخدم تشفير أقوى بكثير.",bruteBtn:"🔓 شوف الـ25 احتمال لرسالة",again:"لاعب جديد 🔄",capCert:"اضغط على الشهادة لتكبيرها 🔍",close:"إغلاق ✕",credit:"صُمم بواسطة المهندسة نجد الشمري",
+ G:"أنا قيصر-بوت 🤖 ساعدني أفك رسائل الهاكرز السرية!",typeHint:"اضغط على الخانات واكتب إجابتك من الكيبورد ⌨️",kb:"غيّر لغة الكيبورد للإنجليزي 🌐",
+ hint0:"💡 تلميح (−1 نجمة)",hintN:"💡 تلميح آخر (−1 نجمة)",hintD:"💡 انتهت التلميحات (3 من 3)",hintOf:n=>"💡 تلميح "+n+" من 3: ",
+ next:"المرحلة التالية",result:"شوف النتيجة 🏆",empty:"اكتب إجابتك أول 😉",ok:"🎉 صح عليك! ",bad:"قريب! راجع الحروف وجرّب مرة ثانية 💪",botHint:"🤖 تلميح من قيصر-بوت: ",loseB:"حظاً أوفر 🍀 لا تيأس وجرّب مرة ثانية!",
+ tap:"اضغط على أي حرف في الحلقة الخارجية 👆",outer:"خارجي",inner:"داخلي",mean:"المعنى: ",first:"أول حرف في الإجابة: ",
+ endH:n=>"أحسنت"+(n?" يا "+n:"")+"! 🎉",endB:r=>"🎉 صرت "+r+"! مبروك على شهادتك 🏆"},
+en:{title:"Caesar Challenge | Cipher Game",h1:"Caesar Challenge 🔐",lead:"A secret message from a hacker just arrived! Help Caesar-Bot encrypt, decrypt and crack ciphers, and prove you’re a real cybersecurity investigator. 3 stages, each with a timer ⏱ — don’t be late!",ph:"Your name (optional)",go:"Start the challenge",st1:"1 Encrypt",st2:"2 Decrypt",st3:"3 Crack",chk:"Check",live:"Text at this shift",shift:"Shift",
+ lose1:"⏰ Time’s up!",lose2:"Better luck next time 🍀",ansWas:"The correct answer was",noGive:"Don’t give up — every investigator starts with an attempt!",retry:"Try again 🔄",
+ whyQ:"💡 Why is the Caesar cipher weak?",whyA:"It has only 25 possible keys, so anyone can try them all in minutes. That’s why modern systems use much stronger encryption.",bruteBtn:"🔓 See all 25 possibilities for",again:"New player 🔄",capCert:"Tap the certificate to enlarge 🔍",close:"Close ✕",credit:"Designed by Eng. Najd Alshammari",
+ G:"I’m Caesar-Bot 🤖 Help me crack the hackers’ secret messages!",typeHint:"Tap the boxes and type your answer on the keyboard ⌨️",kb:"Switch your keyboard to English 🌐",
+ hint0:"💡 Hint (−1 star)",hintN:"💡 Another hint (−1 star)",hintD:"💡 No more hints (3 of 3)",hintOf:n=>"💡 Hint "+n+" of 3: ",
+ next:"Next stage",result:"See result 🏆",empty:"Type your answer first 😉",ok:"🎉 Correct! ",bad:"Close! Check the letters and try again 💪",botHint:"🤖 Hint from Caesar-Bot: ",loseB:"Better luck next time 🍀 Don’t give up — try again!",
+ tap:"Tap any letter on the outer ring 👆",outer:"Outer",inner:"Inner",mean:"Meaning: ",first:"First letter of the answer: ",
+ endH:n=>"Well done"+(n?", "+n:"")+"! 🎉",endB:r=>"🎉 Your title: "+r+" — congratulations! 🏆"}};
+let lang="ar";
+const t=k=>T[lang][k];
+
+const L=[
+{ar:{t:"المرحلة 1 · التشفير",task:"شفّر الكلمة بإزاحة +3 للأمام.",how:"لفّ القرص لين تصير الإزاحة 3، بعدها دوّر على كل حرف في الحلقة الخارجية واقرأ مقابله في الحلقة الداخلية."},en:{t:"Stage 1 · Encryption",task:"Encrypt the word with a +3 shift forward.",how:"Turn the wheel until the shift is 3, then find each letter on the outer ring and read its match on the inner ring."}},
+{ar:{t:"المرحلة 2 · فك التشفير",task:"فُكّ تشفير الكلمة بالرجوع 3 خطوات للخلف.",how:"اضبط القرص على 3، وابحث عن كل حرف في الحلقة الداخلية، والحرف اللي فوقه في الخارجية هو الأصلي."},en:{t:"Stage 2 · Decryption",task:"Decrypt the word by going back 3 steps.",how:"Set the wheel to 3, find each letter on the inner ring — the letter above it on the outer ring is the original."}},
+{k:1,ar:{t:"المرحلة 3 · كسر الشفرة",task:"كلمة مخفية من عالم البرمجة، وما أعطيناك المفتاح!",how:"لفّ القرص وجرّب الإزاحات وحدة وحدة، وراقب النص المفكوك في الشاشة لين تطلع لك كلمة معروفة."},en:{t:"Stage 3 · Code Breaking",task:"A hidden word from the programming world — and we’re not giving you the key!",how:"Turn the wheel and try the shifts one by one, watching the decoded text until a familiar word appears."}}];
+
+/* ===== بنوك الكلمات (أحرف إنجليزية كبيرة فقط، والمفتاح +3) ===== */
+const W1={CODE:["شفرة","Instructions written for computers"],DATA:["بيانات","Facts and information stored by computers"],WEB:["الويب","The network of pages on the internet"],APP:["تطبيق","A program on your phone"],FILE:["ملف","A saved document on a device"]},
+W2={KEY:["مفتاح","Used to lock and unlock secret messages"],LOCK:["قفل","Keeps something closed and protected"],HIDE:["إخفاء","To keep something out of sight"],SAFE:["آمن","Protected and secure"]},
+/* المرحلة 3: [تلميح عربي, النطق بالعربي, تلميح إنجليزي 1, تلميح إنجليزي 2] */
+W3={PYTHON:["شعارها أفعى 🐍","بايثون","Its logo is a snake 🐍","Beginner-friendly and loved for AI and data science"],
+JAVA:["شعارها فنجان قهوة ☕","جافا","Its logo is a cup of coffee ☕","Runs on billions of devices, including Android apps"],
+SWIFT:["لغة أبل لتطبيقات الآيفون 🍎","سويفت","Apple’s language for iPhone apps 🍎","Apple’s modern successor to Objective-C"],
+KOTLIN:["لغة مفضّلة لتطبيقات أندرويد 🤖","كوتلن","A preferred language for Android apps 🤖","Made by JetBrains"],
+RUBY:["اسمها حجر كريم أحمر 💎","روبي","Named after a red gemstone 💎","Famous for the Rails web framework"],
+GO:["لغة جوجل واسمها حرفين بس 🐹","جو","Made by Google, named with just two letters 🐹","Its mascot is a gopher"],
+RUST:["اسمها يعني الصدأ، وشعارها ترس ⚙️","راست","Its name means corrosion on metal, and its logo is a gear ⚙️","Loved for fast, memory-safe systems programming"],
+HTML:["هي اللي تبني هيكل صفحات الويب 🌐","لغة ترميز صفحات الويب","It builds the structure of web pages 🌐","HyperText Markup Language"],
+JAVASCRIPT:["اللي تخلي صفحات الويب تتحرك وتتفاعل ⚡","جافاسكريبت","It makes web pages move and respond ⚡","Runs in every web browser"],
+FLASK:["إطار عمل لبناء مواقع الويب بلغة بايثون 🧪","إطار عمل فلاسك","A framework for building websites with Python 🧪","A lightweight micro-framework"]};
+const last=[],pick=(o,i)=>{const a=Object.keys(o);let x;do{x=a[Math.floor(Math.random()*a.length)]}while(x==last[i]);return last[i]=x};
+function round(i){
+ if(i==0){const p=pick(W1,0),a=enc(p,3);return{w:p,a:a,m:W1[p],h:{
+  ar:["ابدأ بأول حرف: تحرّك 3 خطوات للأمام وشوف وين توصل.","كل حرف يتقدم 3 خطوات: A يصير D، وB يصير E… كمّل على نفس النمط.",T.ar.first+a[0]],
+  en:["Start with the first letter: move it 3 steps forward and see where it lands.","Every letter moves 3 steps forward: A becomes D, B becomes E… keep the same pattern.",T.en.first+a[0]]}}}
+ if(i==1){const p=pick(W2,1);return{w:enc(p,3),a:p,h:{
+  ar:["ابدأ بأول حرف وارجع 3 خطوات للخلف.","المعنى بالعربي: "+W2[p][0],T.ar.first+p[0]],
+  en:["Start with the first letter and go back 3 steps.","Meaning: "+W2[p][1],T.en.first+p[0]]}}}
+ const p=pick(W3,2),w=W3[p];return{w:enc(p,3),a:p,k:3,h:{ar:[w[0],"المعنى بالعربي: "+w[1],T.ar.first+p[0]],en:[w[2],w[3],T.en.first+p[0]]}}
+}
+
+/* ===== المؤقت: الثواني لكل مرحلة (في المرحلة 3 البوت يرسل تلميح تلقائي عند نصف الوقت) ===== */
+const TM=[90,90,150];
+let tv,left=0;
+const paint=()=>{const e=$("tm");e.textContent="⏱ "+Math.floor(left/60)+":"+String(left%60).padStart(2,"0");e.classList.toggle("low",left<=15)};
+function stopT(){clearInterval(tv)}
+function startT(i){
+ stopT();left=TM[i];paint();
+ tv=setInterval(()=>{
+  left--;paint();if(left>0&&left<=10)beep(left<=3?880:660,.1);
+  if(i==2&&left==TM[2]/2)say(t("botHint")+cr.h[lang][0],"hint");
+  if(left<=0){stopT();lose()}
+ },1000);
+}
+function lose(){
+ show("s-lose");document.activeElement.blur();$("la").textContent=cr.a;
+ say(t("loseB"),"bad");mood("sad");fx([300,220]);touch();
+}
+
+/* ===== ألقاب الفائزين + قيصر-بوت ===== */
+const RK=[{t:"Tech Star",e:"⭐"},{t:"Cyber Pioneer",e:"🚀"},{t:"Digital Investigator",e:"🔍"},{t:"Vulnerability Hunter",e:"🛡️"},{t:"Encryption Genius",e:"🔐"}],
+say=(s,c)=>{$("fb").textContent=s;$("fb").className=c||""},
+mood=(m,d)=>{$("bot").setAttribute("class","bot "+m);clearTimeout(mood.t);if(d)mood.t=setTimeout(()=>mood(""),1800)};
+
+/* ===== الشهادة (عربي + English) تظهر في نافذة كبيرة ===== */
+let LN,LR;
+const showCert=()=>{$("oim").src=cert(LN,LR);$("ov").hidden=false};
+function cert(n,r){
+ const pt=matchMedia("(orientation:portrait)").matches,W=pt?900:1200,H=pt?1200:800,m=W/2,k=H/800,z=pt?1.1:1;
+ const c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
+ const F="Tajawal,'Geeza Pro','Noto Sans Arabic',system-ui,sans-serif";
+ const rr=(a,b,w,h,q)=>{x.beginPath();x.moveTo(a+q,b);x.arcTo(a+w,b,a+w,b+h,q);x.arcTo(a+w,b+h,a,b+h,q);x.arcTo(a,b+h,a,b,q);x.arcTo(a,b,a+w,b,q);x.closePath()};
+ const tx=(s,y,w,px,col,d)=>{px=Math.round(px*z);x.font=w+" "+px+"px "+F;const mw=x.measureText(s).width,lim=W-170;if(mw>lim){px=Math.floor(px*lim/mw);x.font=w+" "+px+"px "+F}x.fillStyle=col;x.direction=d||"rtl";x.fillText(s,m,y*k)};
+ const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,"#060a14");g.addColorStop(1,"#0f2347");x.fillStyle=g;x.fillRect(0,0,W,H);
+ x.strokeStyle="rgba(34,211,238,.09)";x.lineWidth=1;
+ for(let i=0;i<=W;i+=40){x.beginPath();x.moveTo(i,0);x.lineTo(i,H);x.stroke()}
+ for(let i=0;i<=H;i+=40){x.beginPath();x.moveTo(0,i);x.lineTo(W,i);x.stroke()}
+ x.strokeStyle="#22d3ee";x.lineWidth=6;rr(30,30,W-60,H-60,28);x.stroke();x.strokeStyle="#4ade80";x.lineWidth=2;rr(48,48,W-96,H-96,20);x.stroke();
+ const bot=ox=>{x.fillStyle="#fbbf24";x.beginPath();x.moveTo(ox+5,110);x.quadraticCurveTo(ox+55,40,ox+105,110);x.lineTo(ox+90,112);x.quadraticCurveTo(ox+55,72,ox+20,112);x.fill();
+  x.fillStyle="#111d38";rr(ox,105,110,90,24);x.fill();x.strokeStyle="#22d3ee";x.lineWidth=4;x.stroke();
+  x.fillStyle="#04101c";rr(ox+14,120,82,52,14);x.fill();x.fillStyle="#22d3ee";
+  [37,73].forEach(d=>{x.beginPath();x.arc(ox+d,142,8,0,7);x.fill()});
+  x.beginPath();x.arc(ox+55,148,14,.2,2.94);x.stroke()};
+ bot(80);bot(W-190);
+ x.textAlign="center";
+ tx("شهادة إنجاز",155,"800",64,"#e6f1ff");
+ tx("Certificate of Achievement",205,"500",34,"#22d3ee","ltr");
+ tx("تحدّي قيصر · Caesar Challenge",255,"500",30,"#8aa0c4");
+ tx("تُمنح إلى · Awarded to",325,"500",30,"#8aa0c4");
+ tx(n||"محقق شفرات · Cyber Detective",425,"800",88,"#4ade80");
+ tx(r.e+" "+r.t,525,"800",56,"#fbbf24","ltr");
+ tx("★".repeat(tot)+"☆".repeat(9-tot),600,"800",48,"#22d3ee","ltr");
+ tx("النقاط · Score: "+tot+" / 9",660,"500",30,"#8aa0c4");
+ tx(new Date().toLocaleDateString(lang=="ar"?"ar":"en-GB",{day:"numeric",month:"long",year:"numeric"}),725,"500",26,"#8aa0c4",lang=="ar"?"rtl":"ltr");
+ return c.toDataURL("image/png");
+}
+
+/* ===== الحالة ===== */
+let pos=0,ang=0,raf,sel=null,cur=-1,st=3,wr=0,hn=0,tot=0,snd=true,dn=0,idle,cr;
+function mk(p,tag,at,tx){const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(tx)e.textContent=tx;p.appendChild(e);return e}
+for(let i=0;i<26;i++){
+ const g=mk($("outer"),"g",{transform:`rotate(${i*S}) translate(0 -126)`,class:"ol"});
+ mk(g,"circle",{r:13,fill:"transparent"});mk(g,"text",{dy:".35em"},A[i]);
+ g.onclick=()=>{sel=i;upd();tick()};
+ mk($("ring"),"text",{transform:`rotate(${i*S}) translate(0 -85)`,dy:".35em",class:"il"},A[i]);
+ mk($("outer"),"line",{y1:-108,y2:-144,transform:"rotate("+(i+.5)*S+")",class:"dv"});
+ mk($("ring"),"line",{y1:-66,y2:-104,transform:"rotate("+(i+.5)*S+")",class:"dv"});
+}
+function beep(f,d){if(!snd)return;try{const c=beep.c||(beep.c=new AudioContext()),o=c.createOscillator(),g=c.createGain();o.frequency.value=f;g.gain.value=.05;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d)}catch(e){}}
+const fx=a=>a.forEach((f,i)=>setTimeout(()=>beep(f,.12),i*110)),tick=()=>beep(520,.03);
+function conf(n){for(let i=0;i<n;i++){const e=document.createElement("i");e.className="cf";e.style.cssText="left:"+Math.random()*100+"vw;background:"+["#f0c35a","#b9a2ff","#5eead4","#fda4af","#8b5cf6"][i%5]+";animation-delay:"+Math.random()*.4+"s;--d:"+(Math.random()*120-60)+"px";document.body.appendChild(e);setTimeout(()=>e.remove(),2700)}}
+function rot(){const to=-pos*S,from=ang,t0=performance.now();cancelAnimationFrame(raf);(function f(ts){const p=Math.min(1,(ts-t0)/450),e=1-Math.pow(1-p,3);ang=from+(to-from)*e;$("ring").setAttribute("transform","rotate("+ang+")");if(p<1)raf=requestAnimationFrame(f)})(t0)}
+function upd(){
+ $("kv").textContent="+"+M(pos);$("lt").textContent=cr?dec(cr.w,pos):"";
+ const h=$("hl");
+ if(sel===null){h.setAttribute("visibility","hidden");$("ro").textContent=t("tap")}
+ else{h.removeAttribute("visibility");h.setAttribute("transform","rotate("+sel*S+")");$("ro").innerHTML=t("outer")+" <bdi>"+A[sel]+"</bdi> ⇄ "+t("inner")+" <bdi>"+A[M(sel+pos)]+"</bdi>"}
+}
+function turn(d,q){pos+=d;upd();rot();if(!q)tick()}
+function show(id){["s-start","s-play","s-end","s-lose"].forEach(s=>$(s).hidden=s!=id)}
+function steps(){document.querySelectorAll("#stp li").forEach((li,i)=>{li.className=i<dn?"done":i==cur?"on":""})}
+function sync(){const v=$("ans").value;$("slots").querySelectorAll("b").forEach((b,i)=>{b.textContent=v[i]||"";b.classList.toggle("cur",i==v.length&&!$("ans").disabled)})}
+const glow=()=>{$("wheel").classList.add("win");setTimeout(()=>$("wheel").classList.remove("win"),1400)};
+const touch=()=>{clearTimeout(idle);idle=setTimeout(()=>$("ag").click(),60000)};
+
+/* نصوص المرحلة الحالية (تتحدث عند تبديل اللغة) */
+function lvText(){
+ const l=L[cur][lang];$("ttl").textContent=l.t;$("task").textContent=l.task;$("how").textContent=l.how;
+ $("mean").textContent=cr.m?t("mean")+cr.m[lang=="ar"?0:1]:"";
+ $("next").textContent=cur<2?t("next"):t("result");
+ $("hint").textContent=hn<1?t("hint0"):hn<3?t("hintN"):t("hintD");
+}
+function load(i){
+ cur=i;dn=i;cr=round(i);st=3;wr=0;hn=0;
+ $("sr").textContent="⭐ "+tot;steps();lvText();
+ $("tiles").innerHTML=[...cr.w].map(c=>"<span>"+c+"</span>").join("");$("tiles").dataset.n=cr.w.length;
+ $("live").hidden=!L[i].k;
+ const a=$("ans"),sl=$("slots");a.value="";a.maxLength=cr.a.length;a.disabled=false;sl.className="slots";sl.dataset.n=cr.a.length;mood("");
+ sl.querySelectorAll("b").forEach(b=>b.remove());[...cr.a].forEach(()=>sl.append(document.createElement("b")));sync();
+ say(t("typeHint"),"mt");
+ $("chk").hidden=false;$("next").hidden=true;$("hint").hidden=false;$("hint").disabled=false;
+ pos=0;sel=null;upd();rot();startT(i);if(matchMedia("(pointer:fine)").matches)a.focus();
+}
+function chk(){
+ const v=$("ans").value.toUpperCase(),a=$("ans"),sl=$("slots");
+ if(!v){say(t("empty"),"bad");return}
+ if(v==cr.a){
+  tot+=st;dn=cur+1;say(t("ok")+"★".repeat(st)+"☆".repeat(3-st),"ok");
+  a.disabled=true;sl.className="slots ok";sync();$("chk").hidden=true;$("hint").hidden=true;$("next").hidden=false;
+  $("sr").textContent="⭐ "+tot;steps();stopT();glow();mood("happy",1);conf(40);fx([660,880,1100]);
+ }else{
+  if(++wr==3&&st>1)st--;
+  say(t("bad"),"bad");
+  sl.classList.remove("bad");void sl.offsetWidth;sl.classList.add("bad");fx([200]);mood("sad",1);
+ }
+}
+function end(){
+ show("s-end");document.activeElement.blur();const n=$("name").value.trim(),r=RK[tot<=4?0:tot<=6?1:tot==7?2:tot==8?3:4];
+ LN=n;LR=r;$("eh").textContent=t("endH")(n);$("cim").src=cert(n,r);showCert();say(t("endB")(r.t),"ok");mood("happy");
+ $("bg").innerHTML=Array.from({length:25},(_,i)=>`<div class="${i+1==cr.k?"hit":""}"><small>+${i+1}</small>${dec(cr.w,i+1)}</div>`).join("");
+ $("bw").textContent=cr.w;$("bg").hidden=true;pos=cr.k;sel=null;upd();rot();glow();conf(90);fx([523,659,784,1047]);touch();
+}
+
+/* ===== اللغة ===== */
+function applyLang(){
+ const d=document.documentElement;d.lang=lang;d.dir=lang=="ar"?"rtl":"ltr";document.title=t("title");
+ document.querySelectorAll("[data-i]").forEach(e=>e.textContent=t(e.dataset.i));
+ $("name").placeholder=t("ph");$("lg").textContent=lang=="ar"?"EN":"عربي";
+ const s=["s-start","s-play","s-end","s-lose"].find(x=>!$(x).hidden);
+ if(s=="s-play"){lvText();say(t("typeHint"),"mt")}
+ else if(s=="s-end"){$("eh").textContent=t("endH")(LN);say(t("endB")(LR.t),"ok")}
+ else if(s=="s-lose")say(t("loseB"),"bad");
+ else say(t("G"));
+ upd();
+}
+
+/* ===== الكتابة من كيبورد الجهاز (لابتوب / جوال / آيباد) ===== */
+function key(c){
+ const a=$("ans");if(a.disabled||$("s-play").hidden)return;
+ if(c=="⌫")a.value=a.value.slice(0,-1);else if(a.value.length<a.maxLength)a.value+=c;
+ $("slots").classList.remove("bad");sync();tick();
+}
+document.addEventListener("keydown",e=>{
+ if(e.target.tagName=="INPUT"||e.ctrlKey||e.metaKey||e.altKey)return;
+ if(e.key=="ArrowRight")turn(1);else if(e.key=="ArrowLeft")turn(-1);
+ else if(/^[a-z]$/i.test(e.key))key(e.key.toUpperCase());
+ else if(e.key=="Backspace")key("⌫");
+ else if(e.key=="Enter"&&e.target.tagName!="BUTTON"&&!$("s-play").hidden&&!$("chk").hidden)chk();
+});
+$("ans").onkeydown=e=>{if(e.key=="Enter")chk()};
+$("ans").oninput=e=>{const v=e.target.value,c=v.replace(/[^a-zA-Z]/g,"").toUpperCase();e.target.value=c;if(c.length<v.length)say(t("kb"),"bad");$("slots").classList.remove("bad");sync()};
+
+/* ===== الأزرار ===== */
+$("go").onclick=()=>{tot=0;show("s-play");load(0)};
+$("next").onclick=()=>cur<2?load(cur+1):end();
+$("ag").onclick=()=>{clearTimeout(idle);stopT();$("ov").hidden=true;$("name").value="";cur=-1;show("s-start");pos=0;sel=null;say(t("G"));mood("");upd();rot()};
+$("rt").onclick=()=>{clearTimeout(idle);tot=0;show("s-play");load(0)};
+$("bb").onclick=()=>{$("bg").hidden=!$("bg").hidden};
+$("chk").onclick=chk;
+$("hint").onclick=()=>{say(t("hintOf")(hn+1)+cr.h[lang][hn],"hint");hn++;st=Math.max(1,st-1);lvText();if(hn>=3)$("hint").disabled=true};
+$("inc").onclick=()=>turn(1);$("dec").onclick=()=>turn(-1);
+$("mute").onclick=e=>{snd=!snd;e.target.textContent=snd?"🔊":"🔇"};
+$("lg").onclick=()=>{lang=lang=="ar"?"en":"ar";applyLang()};
+$("cim").onclick=showCert;
+$("ov").onclick=e=>{if(e.target.tagName!="IMG")$("ov").hidden=true};
+addEventListener("resize",()=>{if(!$("ov").hidden)$("oim").src=cert(LN,LR)});
+document.addEventListener("pointerdown",()=>{if(!$("s-end").hidden||!$("s-lose").hidden)touch()});
+setInterval(()=>{if(!$("s-start").hidden)turn(1,1)},1700);
+applyLang();
+</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>تحدّي قيصر | لعبة فك الشفرة</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<button class="mute" id="mute" aria-label="Sound">🔊</button>
+<button class="mute lg" id="lg" aria-label="Language">EN</button>
+<main class="app">
+<div class="botrow"><svg class="bot" id="bot" viewBox="0 0 100 112" aria-hidden="true">
+  <path d="M24 30Q50 -8 76 30L68 31Q50 6 32 31Z" fill="#fbbf24"/>
+  <rect x="18" y="26" width="64" height="50" rx="16" class="hd"/><rect x="26" y="34" width="48" height="34" rx="10" fill="#04101c"/>
+  <g class="fn" fill="#22d3ee" stroke="#22d3ee" stroke-width="3" stroke-linecap="round"><circle cx="39" cy="48" r="4.5" stroke="none"/><circle cx="61" cy="48" r="4.5" stroke="none"/><path d="M42 58Q50 64 58 58" fill="none"/></g>
+  <g class="fh" fill="none" stroke="#22d3ee" stroke-width="3" stroke-linecap="round"><path d="M34 51Q39 44 44 51M56 51Q61 44 66 51"/><path d="M40 57Q50 68 60 57"/></g>
+  <g class="fs" fill="none" stroke="#fb7185" stroke-width="3" stroke-linecap="round"><path d="M35 44L43 52M43 44L35 52M57 44L65 52M65 44L57 52"/><path d="M42 61Q50 55 58 61"/></g>
+  <rect x="30" y="80" width="40" height="26" rx="10" class="hd"/><circle cx="50" cy="93" r="5" fill="#22d3ee"/>
+ </svg><p id="fb" role="status"></p></div>
+<div class="card">
+ <section id="s-start">
+  <h1 data-i="h1"></h1>
+  <p class="lead" data-i="lead"></p>
+  <input class="in" id="name" maxlength="14" autocomplete="off" aria-label="Name">
+  <button class="btn pulse" id="go" data-i="go"></button>
+  <ol class="steps"><li data-i="st1"></li><li data-i="st2"></li><li data-i="st3"></li></ol>
+ </section>
+ <section id="s-play" hidden>
+  <div class="top"><ol class="stp" id="stp"><li></li><li></li><li></li></ol><span class="pill" id="sr"></span></div>
+  <div class="ttlrow"><h2 id="ttl"></h2><span class="pill" id="tm"></span></div>
+  <p id="task"></p>
+  <div class="tiles" dir="ltr" id="tiles"></div>
+  <p id="mean"></p>
+  <p class="how" id="how"></p>
+  <div class="live" id="live" hidden><span data-i="live"></span><b dir="ltr" id="lt"></b></div>
+  <div class="ans">
+   <div class="slots" id="slots" dir="ltr"><input id="ans" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-label="Answer"></div>
+   <button class="btn" id="chk" data-i="chk"></button>
+  </div>
+  <div class="row"><button class="ghost" id="hint"></button><button class="btn" id="next" hidden></button></div>
+ </section>
+ <section id="s-lose" hidden>
+  <h2 data-i="lose1"></h2>
+  <p class="rank" data-i="lose2"></p>
+  <p class="lead"><span data-i="ansWas"></span> <bdi id="la"></bdi></p>
+  <p class="lead" data-i="noGive"></p>
+  <button class="btn" id="rt" data-i="retry"></button>
+ </section>
+ <section id="s-end" hidden>
+  <h2 id="eh"></h2>
+  <img class="cim" id="cim" alt="Certificate">
+  <p class="how" data-i="capCert"></p>
+  <p class="lead"><b data-i="whyQ"></b> <span data-i="whyA"></span></p>
+  <button class="ghost" id="bb"><span data-i="bruteBtn"></span> <bdi id="bw"></bdi></button>
+  <div class="bruteg" id="bg" dir="ltr" hidden></div>
+  <p><button class="btn" id="ag" data-i="again"></button></p>
+ </section>
+</div>
+<div class="stage">
+ <svg id="wheel" viewBox="-160 -160 320 320" role="img" aria-label="Caesar wheel">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--acc)"/><stop offset="1" style="stop-color:var(--acc2)"/></linearGradient></defs>
+  <circle r="146" class="c1"/><circle r="106" class="c2"/><circle r="64" class="c3"/>
+  <rect id="hl" class="hl" x="-12" y="-142" width="24" height="76" rx="9" visibility="hidden"/>
+  <g id="outer"></g><g id="ring"></g>
+  <path class="mk" d="M-10 -160L10 -160L0 -141Z"/>
+  <text class="kl" y="-18" data-i="shift"></text><text class="kv" id="kv" y="14"></text>
+ </svg>
+ <div class="ctl" dir="ltr"><button class="rb" id="dec" aria-label="−1">−</button><button class="rb" id="inc" aria-label="+1">+</button></div>
+ <p id="ro"></p>
+</div>
+<footer class="cr" data-i="credit"></footer>
+</main>
+<div class="ov" id="ov" hidden>
+ <div class="ovb">
+  <img id="oim" alt="Certificate">
+  <button class="btn" id="oc" data-i="close"></button>
+ </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
